@@ -1,4 +1,4 @@
-import { encode } from 'uqr';
+import { qrMatrix } from './qr-matrix';
 
 export function QrCode({
   value,
@@ -9,15 +9,7 @@ export function QrCode({
   label?: string;
   size?: number;
 }) {
-  const { data, size: modules } = encode(value, { ecc: 'M', border: 2 });
-  const path: string[] = [];
-  for (let y = 0; y < modules; y++) {
-    for (let x = 0; x < modules; x++) {
-      if (data[y * modules + x]) {
-        path.push(`M${x},${y}h1v1h-1z`);
-      }
-    }
-  }
+  const { modules, path } = qrMatrix(value);
   return (
     <figure className="qr">
       <svg
@@ -29,7 +21,7 @@ export function QrCode({
         aria-label={label ?? 'QR code'}
       >
         <rect width={modules} height={modules} fill="#fbf7ef" />
-        <path d={path.join('')} fill="#1a0f0c" />
+        <path d={path} fill="#1a0f0c" />
       </svg>
       {label ? <figcaption>{label}</figcaption> : null}
     </figure>

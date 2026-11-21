@@ -1,7 +1,5 @@
 import { bannerIsComplete, contestBanner } from '../lib/contest';
 
-const TEMPLATE = 'https://docs.google.com/presentation/d/1Yfuk9CJkf4U9M_WukcELhumWgj3Ak6345Ewy8hSp-Hk/edit?usp=sharing';
-
 export function ContestBanner() {
   const config = contestBanner();
   const complete = bannerIsComplete(config);
@@ -13,39 +11,31 @@ export function ContestBanner() {
           Presentation:{' '}
           {config.presentationUrl ? (
             <a href={config.presentationUrl} target="_blank" rel="noreferrer">
-              Short introduction (Widget Factory)
+              {config.presentationUrl}
             </a>
           ) : (
-            <span className="missing">
-              not published yet — a hosted deck based on the{' '}
-              <a href={TEMPLATE} target="_blank" rel="noreferrer">
-                official Widget Factory template
-              </a>{' '}
-              is still required
-            </span>
+            <span className="missing">not set</span>
           )}
         </span>
         <span>
-          Source:{' '}
+          Source Code:{' '}
           {config.sourceUrl ? (
             <a href={config.sourceUrl} target="_blank" rel="noreferrer">
-              Project repository
+              {config.sourceUrl}
             </a>
           ) : (
-            <span className="missing">not published yet</span>
+            <span className="missing">not set</span>
           )}
         </span>
         <span>
-          EMBER2026 donations:{' '}
+          EMBER2026:{' '}
           {config.emberDonationAddress ? (
             <span className="mono">{config.emberDonationAddress}</span>
           ) : (
-            <span className="missing">CashTokens address not provided yet</span>
+            <span className="missing">not set</span>
           )}
         </span>
-        {!complete ? (
-          <span className="missing">Set VITE_BLAZE_PRESENTATION_URL, VITE_BLAZE_SOURCE_URL, and VITE_BLAZE_EMBER_ADDRESS before a live submission.</span>
-        ) : null}
+        {!complete ? <span className="missing">A banner link is missing.</span> : null}
       </div>
     </div>
   );

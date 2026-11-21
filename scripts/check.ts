@@ -64,7 +64,9 @@ import {
 import { mergeClaimPacket } from '../src/lib/storage.ts';
 import { payloadAfter } from '../src/lib/route.ts';
 import type { LaiSeePacket } from '../src/lib/types.ts';
-import { bannerIsComplete, contestBanner, setContestBanner } from '../src/lib/contest.ts';
+import { NETWORK_CLAIM } from '../src/lib/claims.ts';
+import { qrMatrix } from '../src/lib/qr-matrix.ts';
+import { bannerIsComplete, contestBanner, PUBLIC_BANNER, setContestBanner } from '../src/lib/contest.ts';
 import {
   buildWalletSignRequest,
   cashAddressFromPubkey,
@@ -95,6 +97,7 @@ function assertEq(name: string, actual: unknown, expected: unknown) {
   record(name, ok, ok ? undefined : `expected ${expected}, got ${actual}`);
 }
 
+/** Synthetic display-order id for parser and local signing checks. Not broadcast, and not a LaiTab payment. */
 const DISPLAY_TXID = '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f';
 const EXPECTED_WIRE = '1f1e1d1c1b1a191817161514131211100f0e0d0c0b0a09080706050403020100';
 const PALINDROME_TXID = '11'.repeat(32);
@@ -779,16 +782,41 @@ for (const [name, raw] of invalidCases) {
 }
 
 {
-  const empty = contestBanner();
-  assert('banner-empty-by-default', !bannerIsComplete(empty) && !empty.presentationUrl && !empty.sourceUrl && !empty.emberDonationAddress);
+  const qr = qrMatrix('bchtest:qzqxmu8z2c3tgtut8f5sw6t6fe92p87pccwre396hc');
+  const cells = qr.modules * qr.modules;
+  // A flat data[y * modules + x] read of uqr's 2D array paints about one row.
+  // A real code for this fixed input is about 40% dark, across most rows.
+  assert(
+    'qr-density-matches-2d-modules',
+    qr.dark > cells * 0.3 && qr.dark < cells * 0.55,
+    `dark ${qr.dark} of ${cells}`,
+  );
+}
+
+{
+  assertEq(
+    'network-claim-wording',
+    NETWORK_CLAIM,
+    'Built for BCH; demonstrated on Chipnet',
+  );
+}
+
+{
+  const defaults = contestBanner();
+  assert('banner-public-defaults-complete', bannerIsComplete(defaults));
+  assertEq('banner-presentation', defaults.presentationUrl, PUBLIC_BANNER.presentationUrl);
+  assertEq('banner-source', defaults.sourceUrl, PUBLIC_BANNER.sourceUrl);
+  assertEq('banner-ember', defaults.emberDonationAddress, PUBLIC_BANNER.emberDonationAddress);
   setContestBanner({
     presentationUrl: 'https://example.invalid/deck',
     sourceUrl: 'https://example.invalid/repo',
     emberDonationAddress: 'bitcoincash:qpplaceholder',
   });
   assert('banner-complete-when-configured', bannerIsComplete());
+  assertEq('banner-override-source', contestBanner().sourceUrl, 'https://example.invalid/repo');
   setContestBanner(null);
-  assert('banner-reset-to-empty', !bannerIsComplete());
+  assertEq('banner-reset-source', contestBanner().sourceUrl, PUBLIC_BANNER.sourceUrl);
+  assert('banner-reset-still-complete', bannerIsComplete());
 }
 
 const failed = results.filter((r) => !r.ok);

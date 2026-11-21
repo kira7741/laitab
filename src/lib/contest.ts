@@ -1,22 +1,25 @@
 /**
- * Official BCH BLAZE Mainnet Track homepage banner fields.
- * Do not invent a source repo, Widget Factory deck URL, or donation address.
- * Supply real values at build time via Vite env, or at runtime with setContestBanner.
+ * BCH BLAZE homepage banner fields.
+ * Public URLs and the entrant EMBER2026 address are the defaults.
+ * A non-empty Vite env var or setContestBanner() overrides a field.
  */
 export type ContestBannerConfig = {
-  /** Hosted short presentation based on the official Widget Factory template. */
+  /** Hosted project deck. */
   presentationUrl: string;
-  /** Public GitHub / lab repository with this project's source. */
+  /** Public source repository. */
   sourceUrl: string;
   /** Entrant-controlled CashTokens-compatible address for EMBER2026 donations. */
   emberDonationAddress: string;
 };
 
-const empty: ContestBannerConfig = {
-  presentationUrl: '',
-  sourceUrl: '',
-  emberDonationAddress: '',
+export const PUBLIC_BANNER: ContestBannerConfig = {
+  presentationUrl: 'https://transcendent-parfait-b2106b.netlify.app',
+  sourceUrl: 'https://github.com/kira7741/laitab',
+  emberDonationAddress: 'bitcoincash:zzrrg2ljvyvw3az2jhrffuuuwh38399stqk320c4q9',
 };
+
+/** Static walkthrough already published. Hosting it is not a payment receipt. */
+export const PUBLIC_WALKTHROUGH_URL = 'https://gleaming-cheesecake-31e454.netlify.app';
 
 function readEnv(name: string): string {
   try {
@@ -28,6 +31,13 @@ function readEnv(name: string): string {
   }
 }
 
+function pick(override: string | undefined, envName: string, fallback: string): string {
+  if (typeof override === 'string' && override.trim()) return override.trim();
+  const fromEnv = readEnv(envName);
+  if (fromEnv) return fromEnv;
+  return fallback;
+}
+
 let override: Partial<ContestBannerConfig> | null = null;
 
 export function setContestBanner(partial: Partial<ContestBannerConfig> | null): void {
@@ -36,9 +46,13 @@ export function setContestBanner(partial: Partial<ContestBannerConfig> | null): 
 
 export function contestBanner(): ContestBannerConfig {
   return {
-    presentationUrl: override?.presentationUrl ?? readEnv('VITE_BLAZE_PRESENTATION_URL') ?? empty.presentationUrl,
-    sourceUrl: override?.sourceUrl ?? readEnv('VITE_BLAZE_SOURCE_URL') ?? empty.sourceUrl,
-    emberDonationAddress: override?.emberDonationAddress ?? readEnv('VITE_BLAZE_EMBER_ADDRESS') ?? empty.emberDonationAddress,
+    presentationUrl: pick(override?.presentationUrl, 'VITE_BLAZE_PRESENTATION_URL', PUBLIC_BANNER.presentationUrl),
+    sourceUrl: pick(override?.sourceUrl, 'VITE_BLAZE_SOURCE_URL', PUBLIC_BANNER.sourceUrl),
+    emberDonationAddress: pick(
+      override?.emberDonationAddress,
+      'VITE_BLAZE_EMBER_ADDRESS',
+      PUBLIC_BANNER.emberDonationAddress,
+    ),
   };
 }
 

@@ -79,11 +79,12 @@ export function CreateLaiSee() {
       <p className="eyebrow">Lai see</p>
       <h1>A red packet on Bitcoin Cash</h1>
       <p className="lede">
-        LaiTab creates a fresh Chipnet or mainnet address, shows you how to fund it, then gives you a claim link. If
-        you set a passphrase, the private key never travels in the clear.
+        LaiTab creates a fresh Chipnet or mainnet P2PKH address and a claim link. With a passphrase, the link stores
+        an encrypted copy of the key. Without one, the link contains the key. This is not an on-chain hashlock, and
+        there is no timeout refund. Creating the link does not fund the address.
       </p>
       <div className="split">
-        <div className="stack" style={{ maxWidth: 560 }}>
+        <form className="stack" style={{ maxWidth: 560 }} onSubmit={(event) => event.preventDefault()}>
           {fromTab ? (
             <p className="callout">
               Remainder from <strong>{fromTab.title}</strong> is suggested as the amount. You can change it.
@@ -114,14 +115,17 @@ export function CreateLaiSee() {
             Optional passphrase (recommended on mainnet)
             <input
               type="password"
+              name="lai-see-passphrase"
+              autoComplete="new-password"
               value={pass}
               onChange={(e) => setPass(e.target.value)}
               placeholder="A word you can say at the table"
             />
           </label>
           <p className="fine">
-            This is a claimable gift key, not a covenant. Anyone with the unlocked claim link can sweep the coins. The
-            host should keep the backup WIF until the packet is claimed, in case the link is lost.
+            Anyone with the unlocked key can sweep the coins. Keep the backup WIF until the packet is claimed. If the
+            passphrase is lost and that backup was not saved, the coins cannot be recovered. There is no timeout that
+            returns them. This prototype is unaudited — do not lock a large amount.
           </p>
           {network === 'mainnet' && !pass ? (
             <p className="banner">A mainnet packet without a passphrase is like cash in an unsealed envelope.</p>
@@ -130,7 +134,7 @@ export function CreateLaiSee() {
           <button className="btn seal" type="button" disabled={busy} onClick={() => void create()}>
             {busy ? 'Sealing…' : 'Seal this lai see'}
           </button>
-        </div>
+        </form>
         <aside className="laisee">
           <p className="kicker" style={{ color: '#f3d27a' }}>預覽</p>
           <h2>{blessing || '利是'}</h2>

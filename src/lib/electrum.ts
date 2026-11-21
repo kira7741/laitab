@@ -1,6 +1,6 @@
 /**
  * Electrum Cash / Fulcrum JSON-RPC over WebSocket.
- * Hosts below are taken from documented sources; see INDEXER-RESEARCH.md.
+ * Hosts below are the documented Fulcrum endpoints cited on each entry.
  */
 import { sha256, cashAddressToLockingBytecode, decodeTransaction, binToHex, hexToBin } from '@bitauth/libauth';
 

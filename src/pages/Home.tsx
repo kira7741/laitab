@@ -1,4 +1,5 @@
 import { go } from '../lib/route';
+import { NETWORK_CLAIM, PROTOTYPE_WARNING } from '../lib/claims';
 import { formatBch } from '../lib/money';
 import { DEMO_TOTAL_SATS } from '../lib/demo';
 import { listPackets, listTabs } from '../lib/storage';
@@ -10,35 +11,32 @@ export function Home() {
     <div className="wrap">
       <section className="hero">
         <div>
-          <p className="eyebrow">Bitcoin Cash · BCH BLAZE 2026</p>
+          <p className="eyebrow">Bitcoin Cash · prototype</p>
           <h1>
-            <span className="zh">利臺</span>
-            Open the tab.
-            <br />
-            Pass the lai see.
+            <span className="zh-lead">飲茶分帳 + 派利是</span>
+            <span className="zh-lead sub">用 BCH 結算</span>
           </h1>
           <p className="lede">
-            LaiTab is a seated, shareable way to split a bill and send a red packet on Bitcoin Cash. No account, no
-            backend — just a link, a QR code, and a real on-chain payment.
+            Split a yum cha bill and pass a lai see. No account and no backend — a link, a QR code, and a Bitcoin Cash
+            invoice.
           </p>
+          <p className="network-claim">{NETWORK_CLAIM}</p>
           <div className="btn-row">
-            <a className="btn seal" href="#/new" onClick={go('/new')}>
+            <a className="btn seal" href="#/demo" onClick={go('/demo')}>
+              Start the 2-minute Chipnet walkthrough
+            </a>
+            <a className="btn secondary" href="#/new" onClick={go('/new')}>
               Open a new tab
             </a>
-            <a className="btn secondary" href="#/lai" onClick={go('/lai')}>
+            <a className="btn ghost" href="#/lai" onClick={go('/lai')}>
               Send lai see
-            </a>
-            <a className="btn ghost" href="#/demo" onClick={go('/demo')}>
-              Try the yum cha demo
             </a>
           </div>
         </div>
         <div className="hero-card">
           <div className="stamp">利是</div>
-          <p className="kicker">Demo receipt</p>
-          <h2 style={{ fontFamily: 'var(--serif)', fontSize: '1.6rem', margin: '6px 0 12px' }}>
-            Sunday yum cha
-          </h2>
+          <p className="kicker">Chipnet demo receipt</p>
+          <h2 style={{ fontFamily: 'var(--serif)', fontSize: '1.6rem', margin: '6px 0 12px' }}>Sunday yum cha</h2>
           <div className="meta-line">
             <span>Kowloon Bay Tea House</span>
             <span>4 people</span>
@@ -55,7 +53,32 @@ export function Home() {
             <span>Each share</span>
             <strong>{formatBch(DEMO_TOTAL_SATS / 4n)}</strong>
           </div>
+          <p className="fine">Test coins only. Do not send mainnet BCH to this demo.</p>
         </div>
+      </section>
+
+      <section className="section walkthrough" aria-labelledby="walkthrough-title">
+        <h2 id="walkthrough-title">Two-minute walkthrough</h2>
+        <p className="muted">Same steps on a phone or a desktop. The demo receipt stays on Chipnet.</p>
+        <ol className="steps">
+          <li>
+            <a href="#/demo" onClick={go('/demo')}>
+              Open the yum cha demo
+            </a>
+            . Read the Chipnet receipt, the four shares, and the host address.
+          </li>
+          <li>Open one share and read its BIP21 invoice. Do not pay that address from a mainnet wallet.</li>
+          <li>
+            <a href="#/lai" onClick={go('/lai')}>
+              Create a lai see
+            </a>{' '}
+            on Chipnet to see the claim link. Funding that address takes Chipnet coins from a faucet.
+          </li>
+          <li>
+            WizardConnect pairing is optional. A pasted transaction id stays unverified until an indexer confirms it.
+          </li>
+        </ol>
+        <p className="callout">{PROTOTYPE_WARNING}</p>
       </section>
 
       <section className="section">
@@ -63,22 +86,22 @@ export function Home() {
           <article className="card feature">
             <h3>A tab you can pass around</h3>
             <p>
-              Add dishes in satoshis, split equally or by amount, and share one link. Each guest sees only what they
-              owe and pays it in Bitcoin Cash.
+              Add dishes in satoshis, split equally or by amount, and share one link. Each guest sees their share and
+              a BIP21 invoice. The link is not a payment receipt.
             </p>
           </article>
           <article className="card feature">
             <h3>Lai see, not just a QR</h3>
             <p>
-              Create a claimable red packet. Fund the packet address, then send a blessing link — optionally locked
-              with a passphrase you say out loud at the table.
+              A fresh P2PKH address and a claim link. An optional passphrase encrypts the key in that link. It is not an
+              on-chain hashlock, and there is no timeout refund.
             </p>
           </article>
           <article className="card feature">
             <h3>Wallet-native, backend-free</h3>
             <p>
-              Pay with a BIP21 invoice in any BCH wallet, or pair a WizardConnect wallet and request a signature. Claims
-              are signed in the browser with libauth.
+              Pay a BIP21 invoice in a BCH wallet, or pair WizardConnect and request a signature. A claim signs a
+              standard P2PKH sweep in the browser with libauth.
             </p>
           </article>
         </div>

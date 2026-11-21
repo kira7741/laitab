@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { ENTRANT_NAME, NETWORK_CLAIM } from '../lib/claims';
 import { go, pathFromHash } from '../lib/route';
 import { WalletBar } from '../wallet/Wizard';
 import { ContestBanner } from './ContestBanner';
@@ -32,10 +33,9 @@ export function Shell({ children }: { children: ReactNode }) {
       <main>{children}</main>
       <footer className="site-footer">
         <div>
-          LaiTab is an original Bitcoin Cash dapp built for BCH BLAZE 2026. Chipnet is the default network.
-          Mainnet payments only go where you type the address.
+          LaiTab is an unaudited prototype. {NETWORK_CLAIM} Do not send large amounts.
         </div>
-        <div>Solo project · Hung Chun Pan · Hong Kong</div>
+        <div>Solo project · {ENTRANT_NAME} · Hong Kong</div>
       </footer>
     </>
   );

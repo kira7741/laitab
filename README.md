@@ -1,8 +1,103 @@
 # LaiTab · 利臺
 
-Open a tab. Pass the lai see. Settle in Bitcoin Cash.
+飲茶分帳 + 派利是，用 BCH 結算
 
-A solo dapp built for **BCH BLAZE 2026** (Mainnet Track). There is no backend and no account. A tab or a red packet is a shareable link; the coins move on Bitcoin Cash.
+Split a yum cha bill and pass a lai see. No account and no backend.
+
+**Built for BCH; demonstrated on Chipnet.**
+
+Prototype and unaudited. Do not send large amounts. A lost lai see passphrase cannot be recovered if the host backup was not saved.
+
+Entrant: **Jack Hung**.
+
+## Status
+
+| What | Where |
+| --- | --- |
+| Source code | https://github.com/kira7741/laitab |
+| Hosted walkthrough | https://gleaming-cheesecake-31e454.netlify.app |
+| Deck | https://transcendent-parfait-b2106b.netlify.app |
+
+Banner labels are Presentation, Source Code, and EMBER2026:
+
+- Presentation: https://transcendent-parfait-b2106b.netlify.app
+- Source Code: https://github.com/kira7741/laitab
+- EMBER2026: `bitcoincash:zzrrg2ljvyvw3az2jhrffuuuwh38399stqk320c4q9`
+
+The hosted walkthrough can lag this repository until a new build is published.
+
+## Evidence ledger
+
+Checked 21 November 2026, 08:59 HKT.
+
+| Check | Result |
+| --- | --- |
+| `npm test` | 190 passed, 0 failed. Uses fixture txid `000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f` and a synthetic key. The suite does not broadcast. |
+| EMBER2026 on PayButton Chronik | Token-aware P2PKH `86342bf26118e8f44a95c694f39c75e27894b058`. `GET /script/p2pkh/…/utxos` returned HTTP 200 and 0 UTXOs. `GET /history` returned HTTP 200 and 0 bytes. |
+
+## How a lai see works
+
+A lai see is a gift key, not an on-chain hashlock.
+
+1. The browser generates a standard P2PKH key with libauth.
+2. Funding is a normal payment to that address. The output is ordinary P2PKH. There is no hashlock script, no covenant, and no CashScript contract.
+3. The claim link is the packet JSON in the URL.
+   - With no passphrase, the JSON includes the WIF.
+   - With a passphrase, the WIF is encrypted in the browser: PBKDF2, 120,000 iterations, SHA-256, then AES-GCM. The link stores salt, IV, and ciphertext. The passphrase is not written on-chain.
+4. Claiming decrypts the key if needed, checks that it matches the packet address, and signs a P2PKH sweep with libauth.
+5. Anyone who has the unlocked key can sweep. Possession of the key is the only lock.
+6. There is no timeout refund. Unclaimed coins stay at the packet address until a holder of the key spends them. A CashScript hashlock with a timeout refund is a suggestion, not a feature of this code.
+
+## Wallet signing
+
+- A tab share offers a BIP21 invoice. Any Bitcoin Cash wallet that can pay BIP21 can pay it. LaiTab does not receive that wallet's signature.
+- WizardConnect is optional. The sign request is built with `broadcast: false`. If the wallet returns signed hex, LaiTab then tries `broadcastTx`. Pairing alone does not sign or send.
+- The request needs coins that carry a locking script and a derivation path from the paired session. The tests cover that shape with a fake wallet object.
+- WizardConnect here is the organizers' protocol, not WalletConnect v2, and it does not need a Reown project id.
+
+## Claim lookup and broadcast
+
+`fetchUtxos` then `broadcastTx` in `src/lib/indexer.ts`.
+
+Lookup:
+
+- Mainnet Chronik HTTP, protobuf: `https://bch.paybutton.io/script/p2pkh/{hash160}/utxos`, then `https://chronik.pay2stay.com/bch`. These are Bitcoin Cash paths, not eCash `/xec`. Blockchair is the next mainnet lookup.
+- Chipnet has no Chronik HTTP base in this package (`CHIPNET_CHRONIK` is empty). The browser tries Fulcrum at `wss://chipnet.imaginary.cash:50004` (`blockchain.scripthash.listunspent`). Electrum is enabled in the app and disabled in `npm test`.
+- `chipnet.imaginary.cash` in the browser is a web explorer, not an Esplora `/api` server.
+- If lookup fails, paste `txid:vout:satoshis`. An empty lookup is not treated as a payment.
+
+Broadcast of the signed hex:
+
+- Where a Chronik base exists, `POST {base}/tx` with a protobuf body. Chipnet has no Chronik base, so that loop does not run for Chipnet.
+- Mainnet also tries `POST https://api.blockchair.com/bitcoin-cash/push/transaction`.
+- Then Fulcrum `blockchain.transaction.broadcast`: Chipnet `wss://chipnet.imaginary.cash:50004`, mainnet `wss://bch.imaginary.cash:50004`.
+- If none accept the hex, the claim page shows it for a manual push.
+
+A Chipnet claim in this app uses:
+
+- Chipnet coins on the packet address.
+- A UTXO list, from the Chipnet Fulcrum socket or from pasted `txid:vout:satoshis`. A blocked WebSocket stops the automatic lookup.
+- The unlocked WIF, from the claim link or from the passphrase.
+- A destination CashAddr on the same network.
+- A broadcast that a Chipnet node accepts: the Fulcrum socket above, or a manual push of the signed hex. There is no Chipnet Chronik or Blockchair push in this code.
+
+## Screenshots
+
+Pictures of the local production build (`npm run build && npm run preview`).
+
+![Homepage, desktop](docs/screenshots/home-desktop.png)
+
+![Homepage, mobile](docs/screenshots/home-mobile.png)
+
+![Chipnet yum cha demo](docs/screenshots/demo-chipnet.png)
+
+![Lai see create form, before any key is shown](docs/screenshots/lai-see-form.png)
+
+## Architecture
+
+![How a tab and a lai see stay in the browser](docs/architecture.svg)
+
+The tab or packet lives in the link and in `localStorage`. A share becomes a BIP21 invoice or an optional WizardConnect sign request. A lai see is a new P2PKH address plus a claim link. The sweep is signed in the browser when someone claims.
 
 ## Quick start
 
@@ -12,42 +107,21 @@ npm install
 npm run dev
 ```
 
-Then open the printed local URL. Useful hash routes:
-
-- `#/` home
-- `#/demo` yum cha demo tab (Chipnet)
-- `#/new` create a tab
-- `#/lai` create a lai see
-- `#/about` judging notes and faucet links
-
-Production build:
+Hash routes: `#/` home, `#/demo` Chipnet yum cha, `#/new` create a tab, `#/lai` create a lai see, `#/about` notes and faucets.
 
 ```bash
 npm run build
 npm run preview
-```
-
-Automated checks (bill math, CashAddr, passphrase encryption, outpoint byte order, OP_RETURN memos, mocked indexers, WizardConnect sign-request shape):
-
-```bash
 npm test
 ```
 
-## Hosted demo
+`npm test` covers bill math, CashAddr, passphrase encryption, outpoint byte order, OP_RETURN memos, mocked indexers, and the WizardConnect sign-request shape.
 
-A durable public HTTPS build is at https://gleaming-cheesecake-31e454.netlify.app (published 18 November 2026, 12:53 HKT, no site password). Official banner fields are still empty. Confirm the URL still opens before a judge uses it.
-
-To pack source for a later public GitHub/lab repo (`node_modules`, `dist`, and `.env` are excluded):
-
-```bash
-npm run pack
-```
-
-The zip lands in `../artifacts/laitab-src-YYYY-MM-DD.zip`. Do not submit from this bot.
+`npm run pack` writes a source zip beside the project and excludes `node_modules`, `dist`, and `.env`.
 
 ## Try the demo without a wallet
 
-Open `#/demo`. It is a four-person yum cha bill at a Kowloon Bay tea house, total **0.0935 BCH** on Chipnet including a 10% tip, **0.023375 BCH** per person. You can inspect the receipt, BIP21 pay codes, and share link immediately.
+Open `#/demo`. Four people at a Kowloon Bay tea house, total **0.0935 BCH** on Chipnet including a 10% tip, **0.023375 BCH** each. The receipt, BIP21 codes, and share link can be read without paying.
 
 The demo host address is derived from `SHA-256("laitab-demo-host-v1")`:
 
@@ -55,9 +129,9 @@ The demo host address is derived from `SHA-256("laitab-demo-host-v1")`:
 bchtest:qzqxmu8z2c3tgtut8f5sw6t6fe92p87pccwre396hc
 ```
 
-**Do not send mainnet BCH there.** If Chipnet coins are sent to it, they can be recovered with the WIF documented below. Reset the demo tab from the banner, or open `#/demo/reset`.
+**Do not send mainnet BCH there.** Chipnet coins sent there can be recovered with the WIF below. Reset from the demo banner, or open `#/demo/reset`.
 
-Demo host WIF (Chipnet / testnet only):
+Demo host WIF, Chipnet demo only. Never use this key to receive or store mainnet funds.
 
 ```
 cNPeucZGUi3sWYNXEGacoz3QqiyrNki32AJ6n6u1J67RymWyAGxp
@@ -65,35 +139,14 @@ cNPeucZGUi3sWYNXEGacoz3QqiyrNki32AJ6n6u1J67RymWyAGxp
 
 Chipnet faucets: [tbch.googol.cash](https://tbch.googol.cash/) (select chipnet), [chipnet.bch.ninja](https://chipnet.bch.ninja/). Explorer: [chipnet.imaginary.cash](https://chipnet.imaginary.cash/).
 
-## What it does
-
-- **Tabs.** Title, place, line items in BCH, tax and tip, equal or custom split. Shares are integer satoshis and are forced to sum to the bill.
-- **Share.** One URL and a QR code. Guests can add themselves.
-- **Pay.** BIP21 invoice per share, open-in-wallet button, copy URI, and an optional WizardConnect pairing plus a “Request wallet signature” path that builds a protocol sign request. Live Paytaca/Selene signing has not been observed in this package. A pasted 64-character txid is an unverified acknowledgement until an indexer can confirm it.
-- **Lai see.** A fresh P2PKH address, funding invoice, claim link. Optional AES-GCM passphrase so the private key is not in the clear. The browser signs a sweep with [libauth](https://github.com/bitauth/libauth). If an indexer cannot be reached, paste UTXOs (`txid:vout:satoshis`) and/or broadcast the signed hex yourself.
-- **Remainder.** From a tab, turn what is still open into a lai see.
-
-Default network is **Chipnet**. Mainnet is explicit and warned.
-
-## Design choices
-
-See [`../APPROACH.md`](../APPROACH.md) for the contest path, rejected alternatives, and the review pass.
-
-WizardConnect is the organizers’ wallet protocol, not WalletConnect v2, and does not need a Reown project id.
-
-Public indexers are best-effort. Official Bitcoin Cash Chronik HTTP is protobuf. The mainnet list uses the documented PayButton Chronik base `https://bch.paybutton.io` (and the older documented `https://chronik.pay2stay.com/bch` as a fallback). eCash `/xec` bases are not used. No documented live Chipnet BCH Chronik HTTP endpoint was found; Chipnet lookup uses documented Imaginary.cash Fulcrum WebSocket servers when a browser can reach them. `chipnet.imaginary.cash` remains a web explorer, not an Esplora `/api` server. If no indexer replies, paste UTXOs and/or pay with BIP21. A failed lookup is never treated as an on-chain success. See [`../INDEXER-RESEARCH.md`](../INDEXER-RESEARCH.md).
-
-The required BCH BLAZE homepage banner is rendered at the top of every page. Do not invent the three official values. Set `VITE_BLAZE_PRESENTATION_URL`, `VITE_BLAZE_SOURCE_URL`, and `VITE_BLAZE_EMBER_ADDRESS` only with a real hosted Widget Factory presentation, a public source repo, and an entrant-controlled CashTokens-compatible EMBER2026 donation address.
-
 ## Project layout
 
 ```
-src/lib/        money, CashAddr, BIP21, storage, indexer, sweep
+src/lib/        money, CashAddr, BIP21, storage, indexer, sweep, passphrase
 src/pages/      home, create tab, tab view, lai see, claim, about
 src/wallet/     WizardConnect hook and QR dialog
 scripts/check.ts
+docs/           screenshots and the architecture diagram
 ```
 
-## Submission
-
-This repository folder is the project. Host `dist/` (or the dev tree) at a public HTTPS URL, then follow [`../SUBMISSION-CHECKLIST.md`](../SUBMISSION-CHECKLIST.md) and paste [`../WRITEUP.md`](../WRITEUP.md) into DoraHacks. Do not submit from this bot.
+Notes that used to live beside this folder (`APPROACH.md`, `INDEXER-RESEARCH.md`, `SUBMISSION-CHECKLIST.md`, `WRITEUP.md`) are not in this repository. Indexer behavior is the code in `src/lib/indexer.ts` and the claim section above.

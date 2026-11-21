@@ -126,7 +126,9 @@ export function CreateTab() {
           </label>
           {'error' in parsedHost && hostAddress.trim() ? <p className="error">{parsedHost.error}</p> : null}
           {network === 'mainnet' ? (
-            <p className="banner">Mainnet payments are real Bitcoin Cash. Double-check the address before you share the tab.</p>
+            <p className="banner">
+              Mainnet sends real Bitcoin Cash. Double-check the address before you share the tab.
+            </p>
           ) : (
             <p className="callout">Chipnet coins have no monetary value. Use a faucet, then a Chipnet-capable wallet.</p>
           )}

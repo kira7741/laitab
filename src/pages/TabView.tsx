@@ -120,7 +120,9 @@ function LoadedTab({
         </p>
       ) : null}
       {tab.network === 'mainnet' ? (
-        <p className="banner">Mainnet tab — payments are real Bitcoin Cash sent to {shortenAddress(tab.hostAddress)}.</p>
+        <p className="banner">
+          Mainnet tab. Coins sent to {shortenAddress(tab.hostAddress)} are real Bitcoin Cash.
+        </p>
       ) : null}
 
       <div className="split">

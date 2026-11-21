@@ -69,6 +69,7 @@ button { cursor: pointer; }
   padding: 8px 0;
   align-items: baseline;
 }
+.contest-banner-inner span { overflow-wrap: anywhere; }
 .contest-banner a { color: #f3d27a; }
 .contest-banner .missing { color: #d9c8b8; }
 .contest-banner-kicker {
@@ -179,6 +180,27 @@ button { cursor: pointer; }
 .hero h1, h1, h2, h3 { font-family: var(--serif); font-weight: 600; letter-spacing: -0.02em; margin: 0; }
 .hero h1 { font-size: clamp(2.4rem, 6vw, 4.4rem); line-height: 0.95; }
 .hero h1 .zh { display: block; font-size: 0.42em; letter-spacing: 0.28em; color: var(--seal); margin-bottom: 8px; font-weight: 550; }
+.hero h1 .zh-lead {
+  display: block;
+  font-size: clamp(1.85rem, 4.8vw, 3.15rem);
+  line-height: 1.28;
+  letter-spacing: 0.01em;
+  font-weight: 600;
+}
+.hero h1 .zh-lead.sub { color: var(--seal); margin-top: 0.12em; }
+.network-claim {
+  font-size: 0.98rem;
+  color: var(--ink);
+  background: var(--jade-soft);
+  border: 1px solid rgba(47, 107, 79, 0.28);
+  border-radius: 12px;
+  padding: 10px 12px;
+  max-width: 40rem;
+  margin: 0 0 1rem;
+}
+.walkthrough { padding-top: 8px; }
+.steps { margin: 12px 0 0; padding-left: 1.25rem; display: flex; flex-direction: column; gap: 10px; }
+.steps li { padding-left: 0.15rem; }
 .lede { font-size: 1.15rem; color: var(--ink-soft); max-width: 38rem; margin: 1rem 0 1.4rem; }
 .hero-card, .card, .receipt, .panel {
   background: linear-gradient(180deg, #fbf7ef 0%, #f3eadb 100%);

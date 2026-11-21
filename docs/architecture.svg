@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 560" role="img" aria-labelledby="title desc">
+  <title id="title">LaiTab architecture</title>
+  <desc id="desc">Browser app with no backend. Tabs and lai see build requests. Indexers are best-effort lookups. A hosted page is not a payment.</desc>
+  <style>
+    text { font-family: "IBM Plex Sans", "Noto Sans TC", sans-serif; fill: #1a0f0c; }
+    .h { font-size: 20px; font-weight: 700; }
+    .s { font-size: 13px; }
+    .t { font-size: 14px; font-weight: 650; }
+    .box { fill: #fbf7ef; stroke: #1a0f0c; stroke-width: 1.4; }
+    .warn { fill: #f8e6d8; stroke: #8c1d18; }
+    .ok { fill: #dce8e1; stroke: #2f6b4f; }
+  </style>
+  <rect width="980" height="560" fill="#f6efe4"/>
+  <text class="h" x="32" y="40">LaiTab — what the browser does</text>
+  <text class="s" x="32" y="64">No backend. Support is implemented in the page. A funded send has not been observed.</text>
+
+  <rect class="box" x="32" y="92" width="280" height="150" rx="12"/>
+  <text class="t" x="48" y="118">Browser UI</text>
+  <text class="s" x="48" y="142">Hash routes, localStorage</text>
+  <text class="s" x="48" y="162">Share link and QR code</text>
+  <text class="s" x="48" y="182">Chipnet walkthrough by default</text>
+  <text class="s" x="48" y="202">Mainnet is an explicit choice</text>
+
+  <rect class="box" x="350" y="92" width="290" height="150" rx="12"/>
+  <text class="t" x="366" y="118">Tab share</text>
+  <text class="s" x="366" y="142">Bill math in integer satoshis</text>
+  <text class="s" x="366" y="162">BIP21 invoice per share</text>
+  <text class="s" x="366" y="182">Optional WizardConnect request</text>
+  <text class="s" x="366" y="202">Live wallet signing: not observed</text>
+
+  <rect class="box" x="676" y="92" width="272" height="150" rx="12"/>
+  <text class="t" x="692" y="118">Lai see</text>
+  <text class="s" x="692" y="142">Fresh P2PKH address</text>
+  <text class="s" x="692" y="162">Optional AES-GCM passphrase</text>
+  <text class="s" x="692" y="182">Claim link, libauth sweep</text>
+  <text class="s" x="692" y="202">Funded claim: not observed</text>
+
+  <rect class="ok" x="32" y="276" width="608" height="132" rx="12"/>
+  <text class="t" x="48" y="304">Best-effort lookup, not a receipt</text>
+  <text class="s" x="48" y="330">Mainnet Chronik HTTP (protobuf), PayButton base, then a documented fallback</text>
+  <text class="s" x="48" y="350">Chipnet: documented Fulcrum WebSocket when the browser can reach it</text>
+  <text class="s" x="48" y="370">If nothing replies: paste UTXOs and/or broadcast hex yourself</text>
+  <text class="s" x="48" y="390">A failed lookup is never treated as a confirmed payment</text>
+
+  <rect class="warn" x="664" y="276" width="284" height="132" rx="12"/>
+  <text class="t" x="680" y="304">Not evidence of a send</text>
+  <text class="s" x="680" y="330">Hosting the walkthrough</text>
+  <text class="s" x="680" y="350">Local tests and fixture txids</text>
+  <text class="s" x="680" y="370">Empty indexer history</text>
+  <text class="s" x="680" y="390">A pasted, unverified txid</text>
+
+  <rect class="box" x="32" y="436" width="916" height="92" rx="12"/>
+  <text class="t" x="48" y="468">Bitcoin Cash network</text>
+  <text class="s" x="48" y="494">Supports BCH mainnet; public walkthrough runs on Chipnet for safe testing.</text>
+  <text class="s" x="48" y="514">Coins move only if a wallet or a signed sweep is actually broadcast. This diagram does not record such a broadcast.</text>
+</svg>

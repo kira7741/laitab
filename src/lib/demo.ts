@@ -18,7 +18,7 @@ export function demoTab(): Tab {
     network: 'chipnet',
     title: 'Sunday yum cha',
     place: 'Kowloon Bay Tea House',
-    hostName: 'Chun Pan',
+    hostName: 'Jack Hung',
     hostAddress: DEMO_HOST.address,
     memo: 'LaiTab yum cha',
     taxPct: 0,
@@ -32,7 +32,7 @@ export function demoTab(): Tab {
       { id: 'i5', name: 'Jasmine tea (table)', qty: 1, unitSats: 800_000 },
     ],
     guests: [
-      { id: 'g1', name: 'Chun Pan', note: '', shareSats: 0, paidSats: 0, paidTxids: [] },
+      { id: 'g1', name: 'Jack Hung', note: '', shareSats: 0, paidSats: 0, paidTxids: [] },
       { id: 'g2', name: 'Mina', note: '', shareSats: 0, paidSats: 0, paidTxids: [] },
       { id: 'g3', name: 'Ho', note: '', shareSats: 0, paidSats: 0, paidTxids: [] },
       { id: 'g4', name: 'Yan', note: '', shareSats: 0, paidSats: 0, paidTxids: [] },

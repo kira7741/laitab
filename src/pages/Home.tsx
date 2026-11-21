@@ -1,4 +1,5 @@
 import { go } from '../lib/route';
+import { NETWORK_CLAIM, UNVERIFIED_PAYMENT } from '../lib/claims';
 import { formatBch } from '../lib/money';
 import { DEMO_TOTAL_SATS } from '../lib/demo';
 import { listPackets, listTabs } from '../lib/storage';
@@ -10,35 +11,34 @@ export function Home() {
     <div className="wrap">
       <section className="hero">
         <div>
-          <p className="eyebrow">Bitcoin Cash · BCH BLAZE 2026</p>
+          <p className="eyebrow">Bitcoin Cash · prototype</p>
           <h1>
-            <span className="zh">利臺</span>
-            Open the tab.
-            <br />
-            Pass the lai see.
+            <span className="zh-lead">飲茶分帳 + 派利是</span>
+            <span className="zh-lead sub">用 BCH 結算</span>
           </h1>
           <p className="lede">
-            LaiTab is a seated, shareable way to split a bill and send a red packet on Bitcoin Cash. No account, no
-            backend — just a link, a QR code, and a real on-chain payment.
+            Split a yum cha bill and pass a lai see. The pages build a Bitcoin Cash request. They do not themselves
+            move coins. No account and no backend — a link and a QR code. An invoice is not a confirmed payment.
+          </p>
+          <p className="network-claim">
+            {NETWORK_CLAIM} {UNVERIFIED_PAYMENT}
           </p>
           <div className="btn-row">
-            <a className="btn seal" href="#/new" onClick={go('/new')}>
+            <a className="btn seal" href="#/demo" onClick={go('/demo')}>
+              Start the 2-minute Chipnet walkthrough
+            </a>
+            <a className="btn secondary" href="#/new" onClick={go('/new')}>
               Open a new tab
             </a>
-            <a className="btn secondary" href="#/lai" onClick={go('/lai')}>
+            <a className="btn ghost" href="#/lai" onClick={go('/lai')}>
               Send lai see
-            </a>
-            <a className="btn ghost" href="#/demo" onClick={go('/demo')}>
-              Try the yum cha demo
             </a>
           </div>
         </div>
         <div className="hero-card">
           <div className="stamp">利是</div>
-          <p className="kicker">Demo receipt</p>
-          <h2 style={{ fontFamily: 'var(--serif)', fontSize: '1.6rem', margin: '6px 0 12px' }}>
-            Sunday yum cha
-          </h2>
+          <p className="kicker">Chipnet demo receipt</p>
+          <h2 style={{ fontFamily: 'var(--serif)', fontSize: '1.6rem', margin: '6px 0 12px' }}>Sunday yum cha</h2>
           <div className="meta-line">
             <span>Kowloon Bay Tea House</span>
             <span>4 people</span>
@@ -55,7 +55,40 @@ export function Home() {
             <span>Each share</span>
             <strong>{formatBch(DEMO_TOTAL_SATS / 4n)}</strong>
           </div>
+          <p className="fine">Test coins only. Do not send mainnet BCH to this demo.</p>
         </div>
+      </section>
+
+      <section className="section walkthrough" aria-labelledby="walkthrough-title">
+        <h2 id="walkthrough-title">Two-minute walkthrough</h2>
+        <p className="muted">
+          Desktop and mobile use the same steps. This path stays on Chipnet and does not broadcast a transaction.
+          It is not a live funded payment on Chipnet or mainnet.
+        </p>
+        <ol className="steps">
+          <li>
+            <a href="#/demo" onClick={go('/demo')}>
+              Open the yum cha demo
+            </a>
+            . Read the Chipnet receipt, the four shares, and the host address.
+          </li>
+          <li>Open one share and read its BIP21 invoice. Do not pay that address from a mainnet wallet.</li>
+          <li>
+            <a href="#/lai" onClick={go('/lai')}>
+              Create a lai see
+            </a>{' '}
+            on Chipnet if you want to see the claim link. Funding it needs test coins from a faucet. This review did
+            not broadcast one.
+          </li>
+          <li>
+            WizardConnect pairing is optional. Live Paytaca/Selene signing has not been observed. A pasted transaction
+            id stays unverified until an indexer confirms it.
+          </li>
+        </ol>
+        <p className="callout">
+          Prototype and unaudited. Do not send large amounts. If a lai see passphrase is lost and the host backup was
+          not saved, the coins cannot be recovered.
+        </p>
       </section>
 
       <section className="section">
@@ -63,22 +96,22 @@ export function Home() {
           <article className="card feature">
             <h3>A tab you can pass around</h3>
             <p>
-              Add dishes in satoshis, split equally or by amount, and share one link. Each guest sees only what they
-              owe and pays it in Bitcoin Cash.
+              Add dishes in satoshis, split equally or by amount, and share one link. Each guest sees their share and
+              a BIP21 invoice. The link is not a payment receipt.
             </p>
           </article>
           <article className="card feature">
             <h3>Lai see, not just a QR</h3>
             <p>
-              Create a claimable red packet. Fund the packet address, then send a blessing link — optionally locked
-              with a passphrase you say out loud at the table.
+              Create a claimable red packet and a funding invoice. An optional passphrase keeps the private key out of
+              the claim link. Losing that passphrase and the host backup makes the packet unrecoverable.
             </p>
           </article>
           <article className="card feature">
             <h3>Wallet-native, backend-free</h3>
             <p>
-              Pay with a BIP21 invoice in any BCH wallet, or pair a WizardConnect wallet and request a signature. Claims
-              are signed in the browser with libauth.
+              Pay a BIP21 invoice in a BCH wallet, or pair WizardConnect and request a signature. Claims can be signed
+              in the browser with libauth. Neither path has a verified mainnet payment in this review.
             </p>
           </article>
         </div>

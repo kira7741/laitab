@@ -11,7 +11,6 @@ export function About() {
         {NETWORK_CLAIM}
       </p>
       <p>{PROTOTYPE_WARNING}</p>
-      <p>Source, the hosted walkthrough, and the deck are public. The project is not formally submitted to BCH BLAZE.</p>
 
       <div className="grid-2">
         <article className="card feature">

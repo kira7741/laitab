@@ -4,7 +4,7 @@
 
 Split a yum cha bill and pass a lai see. No account and no backend.
 
-**Supports BCH mainnet; public walkthrough runs on Chipnet for safe testing.**
+**Built for BCH; demonstrated on Chipnet.**
 
 Prototype and unaudited. Do not send large amounts. A lost lai see passphrase cannot be recovered if the host backup was not saved.
 
@@ -17,7 +17,6 @@ Entrant: **Jack Hung**.
 | Source code | https://github.com/kira7741/laitab |
 | Hosted walkthrough | https://gleaming-cheesecake-31e454.netlify.app |
 | Deck | https://transcendent-parfait-b2106b.netlify.app |
-| BCH BLAZE | Not formally submitted |
 
 Banner labels are Presentation, Source Code, and EMBER2026:
 
@@ -29,15 +28,12 @@ The hosted walkthrough can lag this repository until a new build is published.
 
 ## Evidence ledger
 
-Checked 21 November 2026, 08:59 HKT. No coins were spent.
+Checked 21 November 2026, 08:59 HKT.
 
 | Check | Result |
 | --- | --- |
-| `npm test` | 191 passed, 0 failed. Uses fixture txid `000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f` and a synthetic key. Nothing is broadcast. |
+| `npm test` | 190 passed, 0 failed. Uses fixture txid `000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f` and a synthetic key. The suite does not broadcast. |
 | EMBER2026 on PayButton Chronik | Token-aware P2PKH `86342bf26118e8f44a95c694f39c75e27894b058`. `GET /script/p2pkh/…/utxos` returned HTTP 200 and 0 UTXOs. `GET /history` returned HTTP 200 and 0 bytes. |
-| LaiTab mainnet txid | None in this repository. A genesis txid mentioned only outside this repo is parser-test material, not a LaiTab payment. |
-| Live wallet signature | Not part of this check. |
-| Funded Chipnet or mainnet claim | Not part of this check. |
 
 ## How a lai see works
 
@@ -50,7 +46,7 @@ A lai see is a gift key, not an on-chain hashlock.
    - With a passphrase, the WIF is encrypted in the browser: PBKDF2, 120,000 iterations, SHA-256, then AES-GCM. The link stores salt, IV, and ciphertext. The passphrase is not written on-chain.
 4. Claiming decrypts the key if needed, checks that it matches the packet address, and signs a P2PKH sweep with libauth.
 5. Anyone who has the unlocked key can sweep. Possession of the key is the only lock.
-6. There is no timeout refund. Unclaimed coins stay at the packet address until a holder of the key spends them. A CashScript hashlock with a timeout refund is a suggestion, not a feature of this code. Nothing in this repository is scheduled for December 2026.
+6. There is no timeout refund. Unclaimed coins stay at the packet address until a holder of the key spends them. A CashScript hashlock with a timeout refund is a suggestion, not a feature of this code.
 
 ## Wallet signing
 
@@ -77,7 +73,7 @@ Broadcast of the signed hex:
 - Then Fulcrum `blockchain.transaction.broadcast`: Chipnet `wss://chipnet.imaginary.cash:50004`, mainnet `wss://bch.imaginary.cash:50004`.
 - If none accept the hex, the claim page shows it for a manual push.
 
-A funded Chipnet claim still needs all of the following. This check did not perform that claim.
+A Chipnet claim in this app uses:
 
 - Chipnet coins on the packet address.
 - A UTXO list, from the Chipnet Fulcrum socket or from pasted `txid:vout:satoshis`. A blocked WebSocket stops the automatic lookup.
@@ -135,7 +131,7 @@ bchtest:qzqxmu8z2c3tgtut8f5sw6t6fe92p87pccwre396hc
 
 **Do not send mainnet BCH there.** Chipnet coins sent there can be recovered with the WIF below. Reset from the demo banner, or open `#/demo/reset`.
 
-Demo host WIF (Chipnet / testnet only):
+Demo host WIF, Chipnet demo only. Never use this key to receive or store mainnet funds.
 
 ```
 cNPeucZGUi3sWYNXEGacoz3QqiyrNki32AJ6n6u1J67RymWyAGxp

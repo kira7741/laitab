@@ -783,15 +783,21 @@ for (const [name, raw] of invalidCases) {
 
 {
   const qr = qrMatrix('bchtest:qzqxmu8z2c3tgtut8f5sw6t6fe92p87pccwre396hc');
-  assert('qr-has-many-dark-modules', qr.dark > qr.modules * 2, `dark ${qr.dark} modules ${qr.modules}`);
-  assert('qr-is-not-solid', qr.dark < qr.modules * qr.modules * 0.8, `dark ${qr.dark}`);
+  const cells = qr.modules * qr.modules;
+  // A flat data[y * modules + x] read of uqr's 2D array paints about one row.
+  // A real code for this fixed input is about 40% dark, across most rows.
+  assert(
+    'qr-density-matches-2d-modules',
+    qr.dark > cells * 0.3 && qr.dark < cells * 0.55,
+    `dark ${qr.dark} of ${cells}`,
+  );
 }
 
 {
   assertEq(
     'network-claim-wording',
     NETWORK_CLAIM,
-    'Supports BCH mainnet; public walkthrough runs on Chipnet for safe testing.',
+    'Built for BCH; demonstrated on Chipnet',
   );
 }
 

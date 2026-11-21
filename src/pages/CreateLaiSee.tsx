@@ -116,7 +116,7 @@ export function CreateLaiSee() {
             <input
               type="password"
               name="lai-see-passphrase"
-              autoComplete="off"
+              autoComplete="new-password"
               value={pass}
               onChange={(e) => setPass(e.target.value)}
               placeholder="A word you can say at the table"

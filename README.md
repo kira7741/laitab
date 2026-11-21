@@ -28,9 +28,11 @@ The hosted walkthrough can lag this repository until a new build is published.
 
 ## Evidence ledger
 
+Two different times on 21 November 2026, Hong Kong time (UTC+8). The Chipnet claim is the 09:30 funding and the 09:32 sweep. The 08:59 rows are an earlier baseline. They are not the time of the claim.
+
 **Built for BCH; demonstrated on Chipnet.** The claim below is a Chipnet sweep. It is not a mainnet payment, and it is not a live Paytaca or Selene signature.
 
-### Chipnet lai see claim, 21 November 2026 (Hong Kong time, UTC+8)
+### Chipnet lai see claim, 09:30 and 09:32 HKT
 
 Funding was confirmed on the Chipnet explorer. The LaiTab app then swept that output.
 
@@ -60,9 +62,9 @@ The app reported the path it used: UTXO lookup “Found 1 unspent output(s) via 
 
 The swept output was ordinary P2PKH. The claim link held the key. This was not an on-chain hashlock, and there is no CashScript timeout refund.
 
-### Earlier the same day, 08:59 HKT
+### Baseline checks, 08:59 HKT
 
-These checks are separate. They do not describe the Chipnet claim above, and the EMBER2026 address was not funded by that claim.
+These rows are only the 08:59 HKT checks. They do not describe the 09:30/09:32 Chipnet claim above, and the EMBER2026 address was not funded by that claim.
 
 | Check | Result |
 | --- | --- |

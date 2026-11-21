@@ -28,7 +28,41 @@ The hosted walkthrough can lag this repository until a new build is published.
 
 ## Evidence ledger
 
-Checked 21 November 2026, 08:59 HKT.
+**Built for BCH; demonstrated on Chipnet.** The claim below is a Chipnet sweep. It is not a mainnet payment, and it is not a live Paytaca or Selene signature.
+
+### Chipnet lai see claim, 21 November 2026 (Hong Kong time, UTC+8)
+
+Funding was confirmed on the Chipnet explorer. The LaiTab app then swept that output.
+
+Packet address P: [`bchtest:qq3xdng4pj04ly6zqvk6y3gg6elx9xzqn5ld5vvqjh`](https://chipnet.imaginary.cash/address/bchtest:qq3xdng4pj04ly6zqvk6y3gg6elx9xzqn5ld5vvqjh)
+
+Funding transaction F, to P:
+
+- txid `1c06b4339f77b326b4a693b7d9246dd16e3192de01324e7e00553ff71288849a`
+- https://chipnet.imaginary.cash/tx/1c06b4339f77b326b4a693b7d9246dd16e3192de01324e7e00553ff71288849a
+- 0.01017 BCH on Chipnet to P, output #0
+- Block #340,431, 01:30 UTC (09:30 HKT)
+
+Claim destination R: [`bchtest:qznrmykd4uhln8pcg58q8g5k473uut575qacaj9usw`](https://chipnet.imaginary.cash/address/bchtest:qznrmykd4uhln8pcg58q8g5k473uut575qacaj9usw)
+
+Claim transaction C, the LaiTab app sweep:
+
+- txid `2d16c2b71755192fbe1d1a10e977eb309ce3d6e3b7dd429dcaa84abbaad9afb9`
+- https://chipnet.imaginary.cash/tx/2d16c2b71755192fbe1d1a10e977eb309ce3d6e3b7dd429dcaa84abbaad9afb9
+- Input #0 spends F output #0 from P
+- Output #0 pays 0.01016771 BCH to R
+- Fee 229 sats (0.00000229 BCH)
+- Output #1 is an OP_RETURN with the text `LaiTab LaiTab Chipnet claim proof`
+- Block #340,433, 01:32 UTC (09:32 HKT)
+- After the claim, P’s balance was 0 (two transactions: +0.01017 BCH, then −0.01017 BCH). R’s balance was 0.01016771 BCH, from this one incoming transaction.
+
+The app reported the path it used: UTXO lookup “Found 1 unspent output(s) via electrum:chipnet.imaginary.cash”, on-chain balance 0.01017 BCH, then broadcast “electrum:chipnet.imaginary.cash”, returning txid C.
+
+The swept output was ordinary P2PKH. The claim link held the key. This was not an on-chain hashlock, and there is no CashScript timeout refund.
+
+### Earlier the same day, 08:59 HKT
+
+These checks are separate. They do not describe the Chipnet claim above, and the EMBER2026 address was not funded by that claim.
 
 | Check | Result |
 | --- | --- |

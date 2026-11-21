@@ -52,5 +52,5 @@
   <rect class="box" x="32" y="436" width="916" height="92" rx="12"/>
   <text class="t" x="48" y="468">Bitcoin Cash network</text>
   <text class="s" x="48" y="494">Built for BCH; demonstrated on Chipnet.</text>
-  <text class="s" x="48" y="514">Coins move only if a wallet or a signed sweep is actually broadcast. This diagram does not record such a broadcast.</text>
+  <text class="s" x="48" y="514">One Chipnet sweep is listed in the README evidence ledger. This diagram is not that transaction.</text>
 </svg>

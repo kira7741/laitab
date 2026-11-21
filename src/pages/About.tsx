@@ -36,6 +36,33 @@ export function About() {
           </p>
         </article>
         <article className="card feature">
+          <h3>Chipnet claim, 21 November 2026</h3>
+          <p>
+            Funding of 0.01017 BCH to the packet address was confirmed on the Chipnet explorer. LaiTab then found that
+            output through Fulcrum at chipnet.imaginary.cash and broadcast a P2PKH sweep on the same server. This is
+            Chipnet only. It is not a mainnet payment and not a Paytaca or Selene signature.
+          </p>
+          <p>
+            Packet{' '}
+            <a href="https://chipnet.imaginary.cash/address/bchtest:qq3xdng4pj04ly6zqvk6y3gg6elx9xzqn5ld5vvqjh">
+              bchtest:qq3xdng4pj04ly6zqvk6y3gg6elx9xzqn5ld5vvqjh
+            </a>
+            . Funding{' '}
+            <a href="https://chipnet.imaginary.cash/tx/1c06b4339f77b326b4a693b7d9246dd16e3192de01324e7e00553ff71288849a">
+              1c06b433…88849a
+            </a>
+            , block #340,431, 09:30 HKT. Claim{' '}
+            <a href="https://chipnet.imaginary.cash/tx/2d16c2b71755192fbe1d1a10e977eb309ce3d6e3b7dd429dcaa84abbaad9afb9">
+              2d16c2b7…d9afb9
+            </a>{' '}
+            pays 0.01016771 BCH to{' '}
+            <a href="https://chipnet.imaginary.cash/address/bchtest:qznrmykd4uhln8pcg58q8g5k473uut575qacaj9usw">
+              bchtest:qznrmykd4uhln8pcg58q8g5k473uut575qacaj9usw
+            </a>
+            , fee 229 sats, block #340,433, 09:32 HKT. The memo output reads “LaiTab LaiTab Chipnet claim proof”.
+          </p>
+        </article>
+        <article className="card feature">
           <h3>Chipnet faucets</h3>
           <p>
             Use <a href="https://tbch.googol.cash/" target="_blank" rel="noreferrer">tbch.googol.cash</a> (select

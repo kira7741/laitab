@@ -1,5 +1,5 @@
 import { go } from '../lib/route';
-import { NETWORK_CLAIM, UNVERIFIED_PAYMENT } from '../lib/claims';
+import { NETWORK_CLAIM, PROTOTYPE_WARNING } from '../lib/claims';
 import { formatBch } from '../lib/money';
 import { DEMO_TOTAL_SATS } from '../lib/demo';
 import { listPackets, listTabs } from '../lib/storage';
@@ -17,12 +17,10 @@ export function Home() {
             <span className="zh-lead sub">用 BCH 結算</span>
           </h1>
           <p className="lede">
-            Split a yum cha bill and pass a lai see. The pages build a Bitcoin Cash request. They do not themselves
-            move coins. No account and no backend — a link and a QR code. An invoice is not a confirmed payment.
+            Split a yum cha bill and pass a lai see. No account and no backend — a link, a QR code, and a Bitcoin Cash
+            invoice.
           </p>
-          <p className="network-claim">
-            {NETWORK_CLAIM} {UNVERIFIED_PAYMENT}
-          </p>
+          <p className="network-claim">{NETWORK_CLAIM}</p>
           <div className="btn-row">
             <a className="btn seal" href="#/demo" onClick={go('/demo')}>
               Start the 2-minute Chipnet walkthrough
@@ -61,10 +59,7 @@ export function Home() {
 
       <section className="section walkthrough" aria-labelledby="walkthrough-title">
         <h2 id="walkthrough-title">Two-minute walkthrough</h2>
-        <p className="muted">
-          Desktop and mobile use the same steps. This path stays on Chipnet and does not broadcast a transaction.
-          It is not a live funded payment on Chipnet or mainnet.
-        </p>
+        <p className="muted">Same steps on a phone or a desktop. The demo receipt stays on Chipnet.</p>
         <ol className="steps">
           <li>
             <a href="#/demo" onClick={go('/demo')}>
@@ -77,18 +72,13 @@ export function Home() {
             <a href="#/lai" onClick={go('/lai')}>
               Create a lai see
             </a>{' '}
-            on Chipnet if you want to see the claim link. Funding it needs test coins from a faucet. This review did
-            not broadcast one.
+            on Chipnet to see the claim link. Funding that address takes Chipnet coins from a faucet.
           </li>
           <li>
-            WizardConnect pairing is optional. Live Paytaca/Selene signing has not been observed. A pasted transaction
-            id stays unverified until an indexer confirms it.
+            WizardConnect pairing is optional. A pasted transaction id stays unverified until an indexer confirms it.
           </li>
         </ol>
-        <p className="callout">
-          Prototype and unaudited. Do not send large amounts. If a lai see passphrase is lost and the host backup was
-          not saved, the coins cannot be recovered.
-        </p>
+        <p className="callout">{PROTOTYPE_WARNING}</p>
       </section>
 
       <section className="section">
@@ -103,15 +93,15 @@ export function Home() {
           <article className="card feature">
             <h3>Lai see, not just a QR</h3>
             <p>
-              Create a claimable red packet and a funding invoice. An optional passphrase keeps the private key out of
-              the claim link. Losing that passphrase and the host backup makes the packet unrecoverable.
+              A fresh P2PKH address and a claim link. An optional passphrase encrypts the key in that link. It is not an
+              on-chain hashlock, and there is no timeout refund.
             </p>
           </article>
           <article className="card feature">
             <h3>Wallet-native, backend-free</h3>
             <p>
-              Pay a BIP21 invoice in a BCH wallet, or pair WizardConnect and request a signature. Claims can be signed
-              in the browser with libauth. Neither path has a verified mainnet payment in this review.
+              Pay a BIP21 invoice in a BCH wallet, or pair WizardConnect and request a signature. A claim signs a
+              standard P2PKH sweep in the browser with libauth.
             </p>
           </article>
         </div>

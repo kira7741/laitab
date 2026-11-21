@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import { parseCashAddress } from '../lib/address';
-import { NETWORK_CLAIM } from '../lib/claims';
 import { applyEqualSplit, formatBch, fromSats, id, parseAmountToSats, subtotalSats, taxSats, tipSats, totalSats } from '../lib/money';
 import { navigate } from '../lib/route';
 import { saveTab } from '../lib/storage';
@@ -128,8 +127,7 @@ export function CreateTab() {
           {'error' in parsedHost && hostAddress.trim() ? <p className="error">{parsedHost.error}</p> : null}
           {network === 'mainnet' ? (
             <p className="banner">
-              Mainnet sends real Bitcoin Cash. {NETWORK_CLAIM} A mainnet payment has not been verified. Double-check
-              the address before you share the tab.
+              Mainnet sends real Bitcoin Cash. Double-check the address before you share the tab.
             </p>
           ) : (
             <p className="callout">Chipnet coins have no monetary value. Use a faucet, then a Chipnet-capable wallet.</p>

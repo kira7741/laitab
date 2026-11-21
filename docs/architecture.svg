@@ -12,7 +12,7 @@
   </style>
   <rect width="980" height="560" fill="#f6efe4"/>
   <text class="h" x="32" y="40">LaiTab — what the browser does</text>
-  <text class="s" x="32" y="64">No backend. Support is implemented in the page. A funded send has not been observed.</text>
+  <text class="s" x="32" y="64">No backend. The page builds the request. Coins move only if a transaction is broadcast.</text>
 
   <rect class="box" x="32" y="92" width="280" height="150" rx="12"/>
   <text class="t" x="48" y="118">Browser UI</text>
@@ -26,14 +26,14 @@
   <text class="s" x="366" y="142">Bill math in integer satoshis</text>
   <text class="s" x="366" y="162">BIP21 invoice per share</text>
   <text class="s" x="366" y="182">Optional WizardConnect request</text>
-  <text class="s" x="366" y="202">Live wallet signing: not observed</text>
+  <text class="s" x="366" y="202">Sign request does not broadcast</text>
 
   <rect class="box" x="676" y="92" width="272" height="150" rx="12"/>
   <text class="t" x="692" y="118">Lai see</text>
   <text class="s" x="692" y="142">Fresh P2PKH address</text>
-  <text class="s" x="692" y="162">Optional AES-GCM passphrase</text>
-  <text class="s" x="692" y="182">Claim link, libauth sweep</text>
-  <text class="s" x="692" y="202">Funded claim: not observed</text>
+  <text class="s" x="692" y="162">Key in the claim link</text>
+  <text class="s" x="692" y="182">Optional AES-GCM passphrase</text>
+  <text class="s" x="692" y="202">No hashlock, no timeout refund</text>
 
   <rect class="ok" x="32" y="276" width="608" height="132" rx="12"/>
   <text class="t" x="48" y="304">Best-effort lookup, not a receipt</text>

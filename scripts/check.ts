@@ -64,7 +64,7 @@ import {
 import { mergeClaimPacket } from '../src/lib/storage.ts';
 import { payloadAfter } from '../src/lib/route.ts';
 import type { LaiSeePacket } from '../src/lib/types.ts';
-import { NETWORK_CLAIM, UNVERIFIED_PAYMENT } from '../src/lib/claims.ts';
+import { NETWORK_CLAIM } from '../src/lib/claims.ts';
 import { qrMatrix } from '../src/lib/qr-matrix.ts';
 import { bannerIsComplete, contestBanner, PUBLIC_BANNER, setContestBanner } from '../src/lib/contest.ts';
 import {
@@ -793,8 +793,6 @@ for (const [name, raw] of invalidCases) {
     NETWORK_CLAIM,
     'Supports BCH mainnet; public walkthrough runs on Chipnet for safe testing.',
   );
-  assert('unverified-boundary-denies-funded-proof', UNVERIFIED_PAYMENT.includes('not a live funded payment'));
-  assert('unverified-boundary-denies-test-as-payment', UNVERIFIED_PAYMENT.includes('Local tests are not live payments'));
 }
 
 {

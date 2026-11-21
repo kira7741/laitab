@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import { NETWORK_CLAIM } from '../lib/claims';
 import { faucetUrls, shortenAddress } from '../lib/address';
 import { bip21 } from '../lib/bip21';
 import { encodeJson } from '../lib/codec';
@@ -80,9 +79,9 @@ export function CreateLaiSee() {
       <p className="eyebrow">Lai see</p>
       <h1>A red packet on Bitcoin Cash</h1>
       <p className="lede">
-        LaiTab creates a fresh Chipnet or mainnet address, shows a funding invoice, then gives you a claim link.
-        {` ${NETWORK_CLAIM}`} If you set a passphrase, the private key is not in the claim link. Creating the link
-        does not fund it, and it is not a verified payment.
+        LaiTab creates a fresh Chipnet or mainnet P2PKH address and a claim link. With a passphrase, the link stores
+        an encrypted copy of the key. Without one, the link contains the key. This is not an on-chain hashlock, and
+        there is no timeout refund. Creating the link does not fund the address.
       </p>
       <div className="split">
         <form className="stack" style={{ maxWidth: 560 }} onSubmit={(event) => event.preventDefault()}>
@@ -124,10 +123,9 @@ export function CreateLaiSee() {
             />
           </label>
           <p className="fine">
-            This is a claimable gift key, not a covenant. Anyone with the unlocked claim link can sweep the coins. Keep
-            the backup WIF until the packet is claimed. If the passphrase is lost and that backup was not saved, the
-            coins cannot be recovered. LaiTab has no server that can reset it. This prototype is unaudited — do not
-            lock a large amount.
+            Anyone with the unlocked key can sweep the coins. Keep the backup WIF until the packet is claimed. If the
+            passphrase is lost and that backup was not saved, the coins cannot be recovered. There is no timeout that
+            returns them. This prototype is unaudited — do not lock a large amount.
           </p>
           {network === 'mainnet' && !pass ? (
             <p className="banner">A mainnet packet without a passphrase is like cash in an unsealed envelope.</p>

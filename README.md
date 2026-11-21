@@ -2,55 +2,92 @@
 
 飲茶分帳 + 派利是，用 BCH 結算
 
-Split a yum cha bill and pass a lai see. The app builds a Bitcoin Cash request in the browser. There is no account and no backend.
+Split a yum cha bill and pass a lai see. No account and no backend.
 
 **Supports BCH mainnet; public walkthrough runs on Chipnet for safe testing.**
 
-The public walkthrough is not a live funded payment. No LaiTab mainnet transaction, funded Chipnet or mainnet claim, or live WizardConnect signature has been observed. Local tests are not live payments. Publishing this site does not prove a payment.
+Prototype and unaudited. Do not send large amounts. A lost lai see passphrase cannot be recovered if the host backup was not saved.
 
 Entrant: **Jack Hung**.
 
-## Public, and not submitted
+## Status
 
-| What | State |
+| What | Where |
 | --- | --- |
-| Source code | Public at https://github.com/kira7741/laitab |
-| Hosted walkthrough | Public at https://gleaming-cheesecake-31e454.netlify.app (HTTP 200 on 21 November 2026). This is a static site. Opening it does not broadcast a transaction. The copy on that host may lag this repository until the owner deploys a new build. |
-| Deck | Public at https://transcendent-parfait-b2106b.netlify.app (HTTP 200 on 21 November 2026). The deck is edited separately from this repository. |
-| BCH BLAZE submission | **Not formally submitted.** Pending owner review and an official Telegram confirmation. Do not treat this repository, the hosted walkthrough, or the deck as that confirmation. |
+| Source code | https://github.com/kira7741/laitab |
+| Hosted walkthrough | https://gleaming-cheesecake-31e454.netlify.app |
+| Deck | https://transcendent-parfait-b2106b.netlify.app |
+| BCH BLAZE | Not formally submitted |
 
-## Supported code versus observed execution
+Banner labels are Presentation, Source Code, and EMBER2026:
 
-Implemented in this source, and exercised by `npm test` with fixtures and mocks:
+- Presentation: https://transcendent-parfait-b2106b.netlify.app
+- Source Code: https://github.com/kira7741/laitab
+- EMBER2026: `bitcoincash:zzrrg2ljvyvw3az2jhrffuuuwh38399stqk320c4q9`
 
-- Chipnet and mainnet CashAddr checks, BIP21 invoices, and integer-satoshi bill splits.
-- A lai see P2PKH key, optional AES-GCM passphrase, and a claim link that omits the raw key when locked.
-- A libauth P2PKH sweep built from a synthetic key. The test key is `0x01` repeated, and the test transaction id is the synthetic value `000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f`. That id is not broadcast.
-- The shape of a WizardConnect signature request, using a fake wallet object.
-- Chronik protobuf encode/decode, including a mocked PayButton response. The mock is not a query that found a LaiTab payment.
+The hosted walkthrough can lag this repository until a new build is published.
 
-Not observed, and not claimed:
+## Evidence ledger
 
-- No LaiTab mainnet transaction id is stored in this repository. None is invented here.
-- A readiness note for 21 November 2026, 08:56 HKT, reports that BCH PayButton Chronik returned zero UTXOs and an empty history for the EMBER2026 address below. An empty history is the absence of a payment, not a payment. An independent read-only check on 21 November 2026 at 08:59 HKT decoded that address as token-aware P2PKH (`86342bf26118e8f44a95c694f39c75e27894b058`) and called `https://bch.paybutton.io/script/p2pkh/86342bf26118e8f44a95c694f39c75e27894b058/utxos`. Chronik returned HTTP 200 protobuf. This repository's `decodeScriptUtxos` counted 0 UTXOs and 0 skipped token outputs. The matching `/history` URL returned HTTP 200 with a 0-byte body, so there was no history payload to decode. Nothing was broadcast.
-- A funded Chipnet claim and a funded mainnet claim have not been established.
-- Live WizardConnect, Paytaca, or Selene signing has not been observed.
-- `npm test` does not spend coins. A passing test is not a live funded payment.
-- Out-of-repo notes that mention the Bitcoin genesis transaction use it as parser-test material only. It is not a LaiTab transaction, and that note is not in this repository.
+Checked 21 November 2026, 08:59 HKT. No coins were spent.
 
-This review did not spend funds, did not use the demo WIF, and did not submit the project.
+| Check | Result |
+| --- | --- |
+| `npm test` | 191 passed, 0 failed. Uses fixture txid `000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f` and a synthetic key. Nothing is broadcast. |
+| EMBER2026 on PayButton Chronik | Token-aware P2PKH `86342bf26118e8f44a95c694f39c75e27894b058`. `GET /script/p2pkh/…/utxos` returned HTTP 200 and 0 UTXOs. `GET /history` returned HTTP 200 and 0 bytes. |
+| LaiTab mainnet txid | None in this repository. A genesis txid mentioned only outside this repo is parser-test material, not a LaiTab payment. |
+| Live wallet signature | Not part of this check. |
+| Funded Chipnet or mainnet claim | Not part of this check. |
 
-## Safety
+## How a lai see works
 
-This is a prototype and it is unaudited. Do not send large amounts.
+A lai see is a gift key, not an on-chain hashlock.
 
-A lai see passphrase that is lost, when the host backup WIF was not saved, cannot be recovered. LaiTab has no server that can reset it.
+1. The browser generates a standard P2PKH key with libauth.
+2. Funding is a normal payment to that address. The output is ordinary P2PKH. There is no hashlock script, no covenant, and no CashScript contract.
+3. The claim link is the packet JSON in the URL.
+   - With no passphrase, the JSON includes the WIF.
+   - With a passphrase, the WIF is encrypted in the browser: PBKDF2, 120,000 iterations, SHA-256, then AES-GCM. The link stores salt, IV, and ciphertext. The passphrase is not written on-chain.
+4. Claiming decrypts the key if needed, checks that it matches the packet address, and signs a P2PKH sweep with libauth.
+5. Anyone who has the unlocked key can sweep. Possession of the key is the only lock.
+6. There is no timeout refund. Unclaimed coins stay at the packet address until a holder of the key spends them. A CashScript hashlock with a timeout refund is a suggestion, not a feature of this code. Nothing in this repository is scheduled for December 2026.
 
-The yum cha demo address is Chipnet-only. Do not send mainnet BCH there.
+## Wallet signing
+
+- A tab share offers a BIP21 invoice. Any Bitcoin Cash wallet that can pay BIP21 can pay it. LaiTab does not receive that wallet's signature.
+- WizardConnect is optional. The sign request is built with `broadcast: false`. If the wallet returns signed hex, LaiTab then tries `broadcastTx`. Pairing alone does not sign or send.
+- The request needs coins that carry a locking script and a derivation path from the paired session. The tests cover that shape with a fake wallet object.
+- WizardConnect here is the organizers' protocol, not WalletConnect v2, and it does not need a Reown project id.
+
+## Claim lookup and broadcast
+
+`fetchUtxos` then `broadcastTx` in `src/lib/indexer.ts`.
+
+Lookup:
+
+- Mainnet Chronik HTTP, protobuf: `https://bch.paybutton.io/script/p2pkh/{hash160}/utxos`, then `https://chronik.pay2stay.com/bch`. These are Bitcoin Cash paths, not eCash `/xec`. Blockchair is the next mainnet lookup.
+- Chipnet has no Chronik HTTP base in this package (`CHIPNET_CHRONIK` is empty). The browser tries Fulcrum at `wss://chipnet.imaginary.cash:50004` (`blockchain.scripthash.listunspent`). Electrum is enabled in the app and disabled in `npm test`.
+- `chipnet.imaginary.cash` in the browser is a web explorer, not an Esplora `/api` server.
+- If lookup fails, paste `txid:vout:satoshis`. An empty lookup is not treated as a payment.
+
+Broadcast of the signed hex:
+
+- Where a Chronik base exists, `POST {base}/tx` with a protobuf body. Chipnet has no Chronik base, so that loop does not run for Chipnet.
+- Mainnet also tries `POST https://api.blockchair.com/bitcoin-cash/push/transaction`.
+- Then Fulcrum `blockchain.transaction.broadcast`: Chipnet `wss://chipnet.imaginary.cash:50004`, mainnet `wss://bch.imaginary.cash:50004`.
+- If none accept the hex, the claim page shows it for a manual push.
+
+A funded Chipnet claim still needs all of the following. This check did not perform that claim.
+
+- Chipnet coins on the packet address.
+- A UTXO list, from the Chipnet Fulcrum socket or from pasted `txid:vout:satoshis`. A blocked WebSocket stops the automatic lookup.
+- The unlocked WIF, from the claim link or from the passphrase.
+- A destination CashAddr on the same network.
+- A broadcast that a Chipnet node accepts: the Fulcrum socket above, or a manual push of the signed hex. There is no Chipnet Chronik or Blockchair push in this code.
 
 ## Screenshots
 
-These pictures are of this repository's local production build (`npm run build && npm run preview`). They show the interface. They are not receipts.
+Pictures of the local production build (`npm run build && npm run preview`).
 
 ![Homepage, desktop](docs/screenshots/home-desktop.png)
 
@@ -64,9 +101,7 @@ These pictures are of this repository's local production build (`npm run build &
 
 ![How a tab and a lai see stay in the browser](docs/architecture.svg)
 
-The page stores the tab or packet in the link and in `localStorage`. A share becomes a BIP21 invoice, or an optional WizardConnect request that is not sent until the guest asks. A lai see is a new address plus a claim link; the sweep is signed in the browser with libauth only when someone claims. Indexers are optional lookups. Mainnet lookup tries the documented PayButton Chronik base `https://bch.paybutton.io`, then the older documented fallback `https://chronik.pay2stay.com/bch`. Those are Bitcoin Cash paths, not eCash `/xec`. No documented live Chipnet Bitcoin Cash Chronik HTTP base is configured; Chipnet lookup uses the documented Imaginary.cash Fulcrum WebSocket when a browser can open it. `chipnet.imaginary.cash` is a web explorer, not an Esplora `/api` server. If no indexer replies, paste UTXOs (`txid:vout:satoshis`) and/or broadcast the signed hex yourself. A failed lookup is never treated as an on-chain success.
-
-WizardConnect here is the organizers' wallet protocol, not WalletConnect v2, and it does not need a Reown project id. Pairing alone sends no coins.
+The tab or packet lives in the link and in `localStorage`. A share becomes a BIP21 invoice or an optional WizardConnect sign request. A lai see is a new P2PKH address plus a claim link. The sweep is signed in the browser when someone claims.
 
 ## Quick start
 
@@ -76,42 +111,21 @@ npm install
 npm run dev
 ```
 
-Then open the printed local URL. Useful hash routes:
-
-- `#/` home
-- `#/demo` yum cha demo tab (Chipnet)
-- `#/new` create a tab
-- `#/lai` create a lai see
-- `#/about` prototype notes and faucet links
-
-Production build:
+Hash routes: `#/` home, `#/demo` Chipnet yum cha, `#/new` create a tab, `#/lai` create a lai see, `#/about` notes and faucets.
 
 ```bash
 npm run build
 npm run preview
-```
-
-Automated checks (bill math, CashAddr, passphrase encryption, outpoint byte order, OP_RETURN memos, mocked indexers, WizardConnect sign-request shape). These checks do not broadcast:
-
-```bash
 npm test
 ```
 
-## Hosted walkthrough
+`npm test` covers bill math, CashAddr, passphrase encryption, outpoint byte order, OP_RETURN memos, mocked indexers, and the WizardConnect sign-request shape.
 
-https://gleaming-cheesecake-31e454.netlify.app
-
-Use it to click through the Chipnet pages. Do not describe that deployment as proof that a payment was made. Banner links in this source are:
-
-- Presentation: https://transcendent-parfait-b2106b.netlify.app
-- Source Code: https://github.com/kira7741/laitab
-- EMBER2026: `bitcoincash:zzrrg2ljvyvw3az2jhrffuuuwh38399stqk320c4q9`
-
-`npm run pack` writes a source zip beside the project and excludes `node_modules`, `dist`, and `.env`. That zip is not a submission.
+`npm run pack` writes a source zip beside the project and excludes `node_modules`, `dist`, and `.env`.
 
 ## Try the demo without a wallet
 
-Open `#/demo`. It is a four-person yum cha bill at a Kowloon Bay tea house, total **0.0935 BCH** on Chipnet including a 10% tip, **0.023375 BCH** per person. You can inspect the receipt, BIP21 pay codes, and share link immediately. Inspecting them does not pay the bill.
+Open `#/demo`. Four people at a Kowloon Bay tea house, total **0.0935 BCH** on Chipnet including a 10% tip, **0.023375 BCH** each. The receipt, BIP21 codes, and share link can be read without paying.
 
 The demo host address is derived from `SHA-256("laitab-demo-host-v1")`:
 
@@ -119,7 +133,7 @@ The demo host address is derived from `SHA-256("laitab-demo-host-v1")`:
 bchtest:qzqxmu8z2c3tgtut8f5sw6t6fe92p87pccwre396hc
 ```
 
-**Do not send mainnet BCH there.** If Chipnet coins are sent to it, they can be recovered with the WIF documented below. Reset the demo tab from the banner, or open `#/demo/reset`. This review did not sweep that address.
+**Do not send mainnet BCH there.** Chipnet coins sent there can be recovered with the WIF below. Reset from the demo banner, or open `#/demo/reset`.
 
 Demo host WIF (Chipnet / testnet only):
 
@@ -129,24 +143,14 @@ cNPeucZGUi3sWYNXEGacoz3QqiyrNki32AJ6n6u1J67RymWyAGxp
 
 Chipnet faucets: [tbch.googol.cash](https://tbch.googol.cash/) (select chipnet), [chipnet.bch.ninja](https://chipnet.bch.ninja/). Explorer: [chipnet.imaginary.cash](https://chipnet.imaginary.cash/).
 
-## What the pages do
-
-- **Tabs.** Title, place, line items in BCH, tax and tip, equal or custom split. Shares are integer satoshis and are forced to sum to the bill.
-- **Share.** One URL and a QR code. Guests can add themselves. The shared tab is a snapshot in the link, not a live settlement ledger.
-- **Pay.** BIP21 invoice per share, open-in-wallet button, copy URI, and an optional WizardConnect pairing plus a "Request wallet signature" path that builds a protocol sign request. Live Paytaca/Selene signing has not been observed. A pasted 64-character txid is an unverified acknowledgement until an indexer can confirm it.
-- **Lai see.** A fresh P2PKH address, funding invoice, claim link. Optional AES-GCM passphrase so the private key is not in the clear. The browser can sign a sweep with [libauth](https://github.com/bitauth/libauth). Creating the packet does not fund it. A funded claim has not been observed. If an indexer cannot be reached, paste UTXOs and/or broadcast the signed hex yourself.
-- **Remainder.** From a tab, the still-open amount can be copied into a new lai see form. That does not move the coins.
-
-Default network for new tabs and the public demo is **Chipnet**. Mainnet is a separate choice and is warned. Mainnet support means the code can build mainnet addresses and invoices. It does not mean a mainnet payment has been verified.
-
 ## Project layout
 
 ```
-src/lib/        money, CashAddr, BIP21, storage, indexer, sweep
+src/lib/        money, CashAddr, BIP21, storage, indexer, sweep, passphrase
 src/pages/      home, create tab, tab view, lai see, claim, about
 src/wallet/     WizardConnect hook and QR dialog
 scripts/check.ts
 docs/           screenshots and the architecture diagram
 ```
 
-Earlier notes that lived outside this repository (`APPROACH.md`, `INDEXER-RESEARCH.md`, `SUBMISSION-CHECKLIST.md`, `WRITEUP.md`) are not part of the published tree. The indexer behavior that matters for a reader is the one in this file and in `src/lib/indexer.ts`. There is no in-repo submission checklist because the project has not been formally submitted.
+Notes that used to live beside this folder (`APPROACH.md`, `INDEXER-RESEARCH.md`, `SUBMISSION-CHECKLIST.md`, `WRITEUP.md`) are not in this repository. Indexer behavior is the code in `src/lib/indexer.ts` and the claim section above.

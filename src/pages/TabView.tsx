@@ -121,8 +121,7 @@ function LoadedTab({
       ) : null}
       {tab.network === 'mainnet' ? (
         <p className="banner">
-          Mainnet tab. Coins sent to {shortenAddress(tab.hostAddress)} are real Bitcoin Cash. A mainnet payment has not
-          been verified, and this page is not proof of payment.
+          Mainnet tab. Coins sent to {shortenAddress(tab.hostAddress)} are real Bitcoin Cash.
         </p>
       ) : null}
 

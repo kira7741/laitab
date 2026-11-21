@@ -1,5 +1,4 @@
-import { ENTRANT_NAME, NETWORK_CLAIM, UNVERIFIED_PAYMENT } from '../lib/claims';
-import { PUBLIC_WALKTHROUGH_URL } from '../lib/contest';
+import { ENTRANT_NAME, NETWORK_CLAIM, PROTOTYPE_WARNING } from '../lib/claims';
 import { DEMO_HOST } from '../lib/demo';
 
 export function About() {
@@ -8,43 +7,33 @@ export function About() {
       <p className="eyebrow">Prototype notes</p>
       <h1>About LaiTab</h1>
       <p className="lede">
-        LaiTab is {ENTRANT_NAME}&apos;s unaudited prototype for splitting a bill and sending a lai see (red packet) on
-        Bitcoin Cash. {NETWORK_CLAIM} {UNVERIFIED_PAYMENT}
+        LaiTab is {ENTRANT_NAME}&apos;s prototype for splitting a bill and sending a lai see on Bitcoin Cash.{' '}
+        {NETWORK_CLAIM}
       </p>
-      <p>
-        The source, the hosted walkthrough, and the deck are public. This project has not been formally submitted to
-        BCH BLAZE. Submission is pending owner review and an official Telegram confirmation. This page does not send
-        that confirmation.
-      </p>
+      <p>{PROTOTYPE_WARNING}</p>
+      <p>Source, the hosted walkthrough, and the deck are public. The project is not formally submitted to BCH BLAZE.</p>
 
       <div className="grid-2">
         <article className="card feature">
           <h3>Two-minute walkthrough</h3>
-          <p className="fine">Chipnet only. Same steps on a phone or a desktop. No mainnet payment is part of this path.</p>
+          <p className="fine">Same steps on a phone or a desktop. The demo stays on Chipnet.</p>
           <ol className="steps">
-            <li>Open the yum cha demo tab and read the Chipnet label on the receipt.</li>
-            <li>Inspect the shares and the BIP21 pay codes. Do not pay the demo address from mainnet.</li>
-            <li>
-              Create a lai see on Chipnet. Funding and claiming need test coins. A lost passphrase is unrecoverable
-              without the host backup.
-            </li>
-            <li>
-              Optionally pair a wallet with WizardConnect and request a signature, or copy the BIP21 invoice. Live
-              Paytaca/Selene signing has not been observed.
-            </li>
+            <li>Open the yum cha demo and read the Chipnet label on the receipt.</li>
+            <li>Inspect one share and its BIP21 code. Do not pay the demo address from mainnet.</li>
+            <li>Create a lai see on Chipnet. The claim link carries the key, encrypted if you set a passphrase.</li>
+            <li>Pair WizardConnect only if you want a signature request. BIP21 does not need pairing.</li>
           </ol>
         </article>
         <article className="card feature">
-          <h3>What is on-chain, and what is not</h3>
+          <h3>What a lai see is</h3>
           <p>
-            Tab data lives in the URL and in your browser. There is no backend. The app can build a BIP21 invoice, a
-            WizardConnect signature request, and a libauth-signed lai see sweep. Those are supported actions. A
-            supported action is not a verified payment.
+            The browser generates a standard P2PKH key. Funding is an ordinary payment to that address. The claim link
+            holds the WIF, or a PBKDF2 and AES-GCM encryption of the WIF. The recipient&apos;s browser unlocks the key
+            and signs a P2PKH sweep with libauth.
           </p>
           <p>
-            Public indexers are best-effort. If none reply, paste unspent outputs and/or broadcast the signed hex
-            yourself. A missing lookup is not treated as a confirmed payment. Hosting{' '}
-            <a href={PUBLIC_WALKTHROUGH_URL}>{PUBLIC_WALKTHROUGH_URL}</a> does not prove that any payment was sent.
+            That is a gift key in the link, not an on-chain hashlock. There is no CashScript contract and no timeout
+            refund. Coins stay at the packet address until a holder of the key spends them.
           </p>
         </article>
         <article className="card feature">
@@ -62,9 +51,8 @@ export function About() {
         <article className="card feature">
           <h3>Demo host recovery</h3>
           <p>
-            The yum cha demo pays a Chipnet address derived from SHA-256(<code>{DEMO_HOST.phrase}</code>). If anyone
-            sends test coins there, they can be recovered with the documented WIF in the README. Do not send mainnet
-            BCH to the demo address.
+            The yum cha demo pays a Chipnet address derived from SHA-256(<code>{DEMO_HOST.phrase}</code>). Test coins
+            sent there can be recovered with the WIF in the README. Do not send mainnet BCH to that address.
           </p>
           <p className="mono fine">{DEMO_HOST.address}</p>
         </article>
